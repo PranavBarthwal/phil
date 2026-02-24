@@ -159,6 +159,69 @@
   background: #ef4444 !important;
 }
 
+/* ── On/Off injection toggle (inside header) ─────────────────────────────── */
+
+#phil-sidebar .phil-sb-onoff {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  user-select: none !important;
+}
+
+#phil-sidebar .phil-sb-onoff input {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+#phil-sidebar .phil-sb-onoff-track {
+  width: 32px !important;
+  height: 17px !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 2px !important;
+  transition: background 0.2s !important;
+  flex-shrink: 0 !important;
+}
+
+#phil-sidebar .phil-sb-onoff-thumb {
+  width: 13px !important;
+  height: 13px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  transition: transform 0.2s, background 0.2s !important;
+  display: block !important;
+}
+
+#phil-sidebar .phil-sb-onoff input:checked + .phil-sb-onoff-track {
+  background: #4361ee !important;
+}
+
+#phil-sidebar .phil-sb-onoff input:checked + .phil-sb-onoff-track .phil-sb-onoff-thumb {
+  transform: translateX(15px) !important;
+  background: #ffffff !important;
+}
+
+#phil-sidebar .phil-sb-onoff-text {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.4px !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  min-width: 18px !important;
+  display: block !important;
+}
+
+#phil-sidebar .phil-sb-onoff input:checked ~ .phil-sb-onoff-text {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
 #phil-sidebar .phil-sb-close {
   width: 28px !important;
   height: 28px !important;
@@ -534,6 +597,54 @@
 #phil-sidebar .phil-sb-btn-danger:hover {
   background: #fee2e2 !important;
   border-color: #fca5a5 !important;
+}
+
+/* ── Provider toggle ─────────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-provider-toggle {
+  display: flex !important;
+  gap: 0 !important;
+  border: 1px solid #e4e7f0 !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+#phil-sidebar .phil-sb-provider-opt {
+  flex: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 7px 10px !important;
+  background: #ffffff !important;
+  border: none !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #9299b8 !important;
+  cursor: pointer !important;
+  transition: background 0.15s, color 0.15s !important;
+  outline: none !important;
+  border-right: 1px solid #e4e7f0 !important;
+}
+
+#phil-sidebar .phil-sb-provider-opt:last-child {
+  border-right: none !important;
+}
+
+#phil-sidebar .phil-sb-provider-opt:hover {
+  background: #f7f8fc !important;
+  color: #4361ee !important;
+}
+
+#phil-sidebar .phil-sb-provider-opt.phil-sb-provider-active {
+  background: #eef0fd !important;
+  color: #4361ee !important;
+  font-weight: 700 !important;
+}
+
+#phil-sidebar .phil-sb-provider-opt svg {
+  display: block !important;
+  flex-shrink: 0 !important;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */

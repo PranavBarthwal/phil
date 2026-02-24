@@ -13,10 +13,14 @@
   // ── State ──────────────────────────────────────────────────────────────────
   let currentFields = [];
   let scanDebounceTimer = null;
+  let injectionEnabled = true; // controlled by sidebar toggle
 
   // ── Init ───────────────────────────────────────────────────────────────────
 
-  function init() {
+  async function init() {
+    // Read persisted toggle state before first scan
+    const stored = await new Promise((r) => chrome.storage.local.get("injectionEnabled", r));
+    injectionEnabled = stored.injectionEnabled !== false; // default true
     scanAndInject();
     observeDOM();
     listenForMessages();
@@ -25,6 +29,7 @@
   // ── Scanning & Injection ───────────────────────────────────────────────────
 
   function scanAndInject() {
+    if (!injectionEnabled) return;
     currentFields = PhilDetector.detectAllFields();
     PhilUIInjector.injectButtons(currentFields, handleSingleFill);
   }
@@ -232,6 +237,16 @@
 
     // Triggered by Fill All button inside the sidebar
     document.addEventListener("phil-fill-all", () => handleFillAll());
+
+    // Injection toggle from sidebar
+    document.addEventListener("phil-injection-toggle", (e) => {
+      injectionEnabled = e.detail.enabled;
+      if (!injectionEnabled) {
+        PhilUIInjector.removeAll();
+      } else {
+        scanAndInject();
+      }
+    });
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

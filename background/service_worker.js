@@ -57,11 +57,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  * @param {{ fieldContext: object, profile: object }} payload
  */
 async function handleGenerateAnswer({ fieldContext, profile, fillType = "short", extraContext = null }) {
-  const { apiKey, aiModel } = await chrome.storage.local.get(["apiKey", "aiModel"]);
-  if (!apiKey) throw new Error("No Gemini API key set. Please add it in the extension popup.");
+  const settings = await chrome.storage.local.get(["apiKey", "aiModel", "llmProvider", "ollamaUrl", "ollamaModel"]);
+  const provider = settings.llmProvider || "gemini";
 
   const prompt = buildPrompt(fieldContext, profile, false, fillType, extraContext);
-  return await callGemini(apiKey, aiModel, prompt, fillType);
+
+  if (provider === "ollama") {
+    const ollamaUrl   = settings.ollamaUrl   || "http://localhost:11434/api/chat";
+    const ollamaModel = settings.ollamaModel || "llama3.2:1b";
+    return await callOllama(ollamaUrl, ollamaModel, prompt);
+  }
+
+  // Default: Gemini
+  if (!settings.apiKey) throw new Error("No Gemini API key set. Open the PhilAI sidebar → Settings.");
+  return await callGemini(settings.apiKey, settings.aiModel, prompt, fillType);
 }
 
 /**
@@ -69,15 +78,25 @@ async function handleGenerateAnswer({ fieldContext, profile, fillType = "short",
  * @param {{ fields: object[], profile: object }} payload
  */
 async function handleFillAll({ fields, profile }) {
-  const { apiKey, aiModel } = await chrome.storage.local.get(["apiKey", "aiModel"]);
-  if (!apiKey) throw new Error("No Gemini API key set. Please add it in the extension popup.");
+  const settings = await chrome.storage.local.get(["apiKey", "aiModel", "llmProvider", "ollamaUrl", "ollamaModel"]);
+  const provider     = settings.llmProvider || "gemini";
+  const ollamaUrl    = settings.ollamaUrl   || "http://localhost:11434/api/chat";
+  const ollamaModel  = settings.ollamaModel || "llama3.2:1b";
+
+  if (provider === "gemini" && !settings.apiKey) {
+    throw new Error("No Gemini API key set. Open the PhilAI sidebar → Settings.");
+  }
 
   const answers = {};
   // Sequential calls to respect rate limits
   for (const field of fields) {
     try {
       const prompt = buildPrompt(field, profile, false, "medium", null);
-      answers[field.id] = await callGemini(apiKey, aiModel, prompt, "medium");
+      if (provider === "ollama") {
+        answers[field.id] = await callOllama(ollamaUrl, ollamaModel, prompt);
+      } else {
+        answers[field.id] = await callGemini(settings.apiKey, settings.aiModel, prompt, "medium");
+      }
     } catch (e) {
       answers[field.id] = null;
     }
@@ -163,6 +182,41 @@ function buildProfileBlock(profile = {}) {
   if (profile.otherLinks)  sections.push(`Other Links:\n${profile.otherLinks}`);
 
   return sections.join("\n\n") || "No profile data provided.";
+}
+
+/**
+ * Calls a local Ollama instance via the /api/chat endpoint.
+ * @param {string} url   – full URL, e.g. "http://localhost:11434/api/chat"
+ * @param {string} model – e.g. "llama3.2:1b"
+ * @param {string} prompt
+ * @returns {Promise<string>}
+ */
+async function callOllama(url, model, prompt) {
+  let response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        messages: [{ role: "user", content: prompt }],
+        stream: false,
+        options: { temperature: 0.4 },
+      }),
+    });
+  } catch (err) {
+    throw new Error(`Could not reach Ollama at ${url}. Make sure Ollama is running and OLLAMA_ORIGINS=* is set. (${err.message})`);
+  }
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(`Ollama error ${response.status}: ${body || "unknown error"}`);
+  }
+
+  const data = await response.json();
+  const text = data?.message?.content?.trim();
+  if (!text) throw new Error("Ollama returned an empty response. Please try again.");
+  return text;
 }
 
 /**

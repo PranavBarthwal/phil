@@ -20,7 +20,7 @@ const PhilSidebar = (() => {
     "linkedin", "github", "portfolio", "otherLinks",
     "resumeText",
   ];
-  const SETTINGS_FIELDS = ["apiKey", "aiModel"];
+  const SETTINGS_FIELDS = ["apiKey", "aiModel", "ollamaUrl", "ollamaModel"];
 
   // ── SVG icons (inline, reused across UI) ──────────────────────────────────
 
@@ -52,6 +52,11 @@ const PhilSidebar = (() => {
         <span class="phil-sb-subtitle">AI Job Form Filler</span>
       </div>
       <div class="phil-sb-status-dot" id="phil-sb-status-dot" title="Extension active"></div>
+      <label class="phil-sb-onoff" id="phil-sb-injection-label" title="Enable / disable field injection">
+        <input type="checkbox" id="phil-sb-injection-toggle" checked />
+        <span class="phil-sb-onoff-track"><span class="phil-sb-onoff-thumb"></span></span>
+        <span class="phil-sb-onoff-text">ON</span>
+      </label>
       <button class="phil-sb-close" id="phil-sb-close-btn" title="Close sidebar">${ICONS.close}</button>
     </header>
 
@@ -141,24 +146,57 @@ const PhilSidebar = (() => {
 
       <!-- Settings -->
       <section class="phil-sb-content" data-tab="settings">
+
+        <!-- Provider picker -->
         <div class="phil-sb-form-group">
-          <label for="phil-sb-apiKey">
-            Gemini API Key
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="phil-sb-label-link" title="Get your Gemini API key">Get key ↗</a>
-          </label>
-          <div class="phil-sb-input-wrap">
-            <input type="password" id="phil-sb-apiKey" placeholder="AIza…" autocomplete="off" />
-            <button class="phil-sb-toggle-vis" id="phil-sb-toggle-key" type="button" title="Show/hide key">${ICONS.eye}</button>
+          <label>AI Provider</label>
+          <div class="phil-sb-provider-toggle">
+            <button class="phil-sb-provider-opt phil-sb-provider-active" data-provider="gemini">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+              Gemini
+            </button>
+            <button class="phil-sb-provider-opt" data-provider="ollama">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Ollama (Local)
+            </button>
           </div>
-          <p class="phil-sb-field-note">Stored only in your browser. Calls go directly to Google's Gemini API — never proxied.</p>
         </div>
-        <div class="phil-sb-form-group">
-          <label for="phil-sb-aiModel">Gemini Model</label>
-          <select id="phil-sb-aiModel">
-            <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Free tier – recommended)</option>
-            <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite (Free tier – lightest)</option>
-            <option value="gemini-2.5-pro">Gemini 2.5 Pro (Paid – best quality)</option>
-          </select>
+
+        <!-- Gemini config -->
+        <div id="phil-sb-gemini-cfg">
+          <div class="phil-sb-form-group">
+            <label for="phil-sb-apiKey">
+              Gemini API Key
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" class="phil-sb-label-link" title="Get your Gemini API key">Get key ↗</a>
+            </label>
+            <div class="phil-sb-input-wrap">
+              <input type="password" id="phil-sb-apiKey" placeholder="AIza…" autocomplete="off" />
+              <button class="phil-sb-toggle-vis" id="phil-sb-toggle-key" type="button" title="Show/hide key">${ICONS.eye}</button>
+            </div>
+            <p class="phil-sb-field-note">Stored only in your browser. Calls go directly to Google's Gemini API — never proxied.</p>
+          </div>
+          <div class="phil-sb-form-group">
+            <label for="phil-sb-aiModel">Gemini Model</label>
+            <select id="phil-sb-aiModel">
+              <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Free tier – recommended)</option>
+              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite (Free tier – lightest)</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro (Paid – best quality)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Ollama config -->
+        <div id="phil-sb-ollama-cfg" style="display:none">
+          <div class="phil-sb-form-group">
+            <label for="phil-sb-ollamaUrl">Ollama API URL</label>
+            <input type="text" id="phil-sb-ollamaUrl" placeholder="http://localhost:11434/api/chat" autocomplete="off" />
+            <p class="phil-sb-field-note">Ollama must be running with <code style="font-family:monospace;font-size:10px;background:#f1f5f9;padding:1px 4px;border-radius:3px">OLLAMA_ORIGINS=*</code> to allow browser access.</p>
+          </div>
+          <div class="phil-sb-form-group">
+            <label for="phil-sb-ollamaModel">Model Name</label>
+            <input type="text" id="phil-sb-ollamaModel" placeholder="llama3.2:1b" autocomplete="off" />
+            <p class="phil-sb-field-note">Must be pulled locally, e.g. <code style="font-family:monospace;font-size:10px;background:#f1f5f9;padding:1px 4px;border-radius:3px">ollama pull llama3.2:1b</code></p>
+          </div>
         </div>
 
         <div class="phil-sb-section">
@@ -248,6 +286,15 @@ const PhilSidebar = (() => {
     // Close button
     sidebar.querySelector("#phil-sb-close-btn").addEventListener("click", close);
 
+    // Injection on/off toggle
+    sidebar.querySelector("#phil-sb-injection-toggle").addEventListener("change", async (e) => {
+      const enabled = e.target.checked;
+      const label = sidebar.querySelector(".phil-sb-onoff-text");
+      if (label) label.textContent = enabled ? "ON" : "OFF";
+      await chrome.storage.local.set({ injectionEnabled: enabled });
+      document.dispatchEvent(new CustomEvent("phil-injection-toggle", { detail: { enabled } }));
+    });
+
     // Floating toggle
     toggleBtn.addEventListener("click", open);
 
@@ -275,6 +322,16 @@ const PhilSidebar = (() => {
       close();
       // Let content_main.js handle the actual fill
       document.dispatchEvent(new CustomEvent("phil-fill-all"));
+    });
+
+    // Provider toggle
+    sidebar.querySelectorAll(".phil-sb-provider-opt").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        sidebar.querySelectorAll(".phil-sb-provider-opt").forEach((b) => b.classList.remove("phil-sb-provider-active"));
+        btn.classList.add("phil-sb-provider-active");
+        updateProviderVisibility(btn.dataset.provider);
+        saveProfile().catch(() => {});
+      });
     });
 
     // API key visibility toggle
@@ -359,8 +416,21 @@ const PhilSidebar = (() => {
   const PAID_ONLY_MODELS = ["gemini-2.5-pro"];
   const FREE_DEFAULT_MODEL = "gemini-2.5-flash";
 
+  function updateProviderVisibility(provider) {
+    const geminiCfg = sidebar.querySelector("#phil-sb-gemini-cfg");
+    const ollamaCfg = sidebar.querySelector("#phil-sb-ollama-cfg");
+    if (!geminiCfg || !ollamaCfg) return;
+    if (provider === "ollama") {
+      geminiCfg.style.display = "none";
+      ollamaCfg.style.removeProperty("display");
+    } else {
+      ollamaCfg.style.display = "none";
+      geminiCfg.style.removeProperty("display");
+    }
+  }
+
   async function loadData() {
-    const data = await storageGet(["profile", "apiKey", "aiModel"]);
+    const data = await storageGet(["profile", "apiKey", "aiModel", "llmProvider", "ollamaUrl", "ollamaModel", "injectionEnabled"]);
     const profile = data.profile || {};
 
     PROFILE_FIELDS.forEach((key) => {
@@ -385,6 +455,26 @@ const PhilSidebar = (() => {
     if (resolvedModel !== storedModel) {
       await chrome.storage.local.set({ aiModel: resolvedModel });
     }
+
+    // Ollama fields
+    const ollamaUrlEl   = sidebar.querySelector("#phil-sb-ollamaUrl");
+    const ollamaModelEl = sidebar.querySelector("#phil-sb-ollamaModel");
+    if (ollamaUrlEl)   ollamaUrlEl.value   = data.ollamaUrl   || "http://localhost:11434/api/chat";
+    if (ollamaModelEl) ollamaModelEl.value = data.ollamaModel || "llama3.2:1b";
+
+    // Provider selection
+    const provider = data.llmProvider || "gemini";
+    sidebar.querySelectorAll(".phil-sb-provider-opt").forEach((btn) => {
+      btn.classList.toggle("phil-sb-provider-active", btn.dataset.provider === provider);
+    });
+    updateProviderVisibility(provider);
+
+    // Injection toggle (default ON)
+    const injectionEnabled = data.injectionEnabled !== false;
+    const toggleEl = sidebar.querySelector("#phil-sb-injection-toggle");
+    const labelEl  = sidebar.querySelector(".phil-sb-onoff-text");
+    if (toggleEl) toggleEl.checked = injectionEnabled;
+    if (labelEl)  labelEl.textContent = injectionEnabled ? "ON" : "OFF";
   }
 
   async function saveProfile() {
@@ -394,12 +484,19 @@ const PhilSidebar = (() => {
       if (el) profile[key] = el.value.trim();
     });
 
-    const apiKeyEl = sidebar.querySelector("#phil-sb-apiKey");
-    const modelEl  = sidebar.querySelector("#phil-sb-aiModel");
-    const apiKey   = apiKeyEl ? apiKeyEl.value.trim() : "";
-    const aiModel  = modelEl  ? modelEl.value         : FREE_DEFAULT_MODEL;
+    const apiKeyEl      = sidebar.querySelector("#phil-sb-apiKey");
+    const modelEl       = sidebar.querySelector("#phil-sb-aiModel");
+    const ollamaUrlEl   = sidebar.querySelector("#phil-sb-ollamaUrl");
+    const ollamaModelEl = sidebar.querySelector("#phil-sb-ollamaModel");
+    const activeProvider = sidebar.querySelector(".phil-sb-provider-opt.phil-sb-provider-active");
 
-    await chrome.storage.local.set({ profile, apiKey, aiModel });
+    const apiKey      = apiKeyEl      ? apiKeyEl.value.trim()      : "";
+    const aiModel     = modelEl       ? modelEl.value              : FREE_DEFAULT_MODEL;
+    const ollamaUrl   = ollamaUrlEl   ? ollamaUrlEl.value.trim()   : "http://localhost:11434/api/chat";
+    const ollamaModel = ollamaModelEl ? ollamaModelEl.value.trim() : "llama3.2:1b";
+    const llmProvider = activeProvider ? activeProvider.dataset.provider : "gemini";
+
+    await chrome.storage.local.set({ profile, apiKey, aiModel, ollamaUrl, ollamaModel, llmProvider });
     showStatus("Saved", false);
   }
 
