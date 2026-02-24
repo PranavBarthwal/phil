@@ -27,6 +27,15 @@
  *  4. Content script shows answer in modal → user edits → fills field
  */
 
+// Toggle sidebar when user clicks the extension icon
+chrome.action.onClicked.addListener(async (tab) => {
+  try {
+    await chrome.tabs.sendMessage(tab.id, { type: "TOGGLE_SIDEBAR" });
+  } catch {
+    // Content script not available on this page (e.g. chrome:// URLs)
+  }
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "GENERATE_ANSWER") {
     handleGenerateAnswer(message.payload)
@@ -47,12 +56,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  * Generates an AI answer for a single field.
  * @param {{ fieldContext: object, profile: object }} payload
  */
-async function handleGenerateAnswer({ fieldContext, profile }) {
+async function handleGenerateAnswer({ fieldContext, profile, fillType = "short", extraContext = null }) {
   const { apiKey, aiModel } = await chrome.storage.local.get(["apiKey", "aiModel"]);
   if (!apiKey) throw new Error("No Gemini API key set. Please add it in the extension popup.");
 
-  const prompt = buildPrompt(fieldContext, profile, false);
-  return await callGemini(apiKey, aiModel, prompt);
+  const prompt = buildPrompt(fieldContext, profile, false, fillType, extraContext);
+  return await callGemini(apiKey, aiModel, prompt, fillType);
 }
 
 /**
@@ -67,8 +76,8 @@ async function handleFillAll({ fields, profile }) {
   // Sequential calls to respect rate limits
   for (const field of fields) {
     try {
-      const prompt = buildPrompt(field, profile, false);
-      answers[field.id] = await callGemini(apiKey, aiModel, prompt);
+      const prompt = buildPrompt(field, profile, false, "medium", null);
+      answers[field.id] = await callGemini(apiKey, aiModel, prompt, "medium");
     } catch (e) {
       answers[field.id] = null;
     }
@@ -78,8 +87,13 @@ async function handleFillAll({ fields, profile }) {
 
 /**
  * Constructs a Gemini prompt from field context + user profile.
+ * @param {object}      fieldContext
+ * @param {object}      profile
+ * @param {boolean}     isBatch
+ * @param {string}      fillType     – 'crisp' | 'short' | 'medium' | 'long'
+ * @param {string|null} extraContext – additional user-provided context
  */
-function buildPrompt(fieldContext, profile, isBatch) {
+function buildPrompt(fieldContext, profile, isBatch, fillType = "short", extraContext = null) {
   const {
     label = "",
     placeholder = "",
@@ -88,12 +102,20 @@ function buildPrompt(fieldContext, profile, isBatch) {
     pageTitle = "",
   } = fieldContext;
 
-  const isLong = fieldType === "textarea";
-  const lengthInstruction = isLong
-    ? "Write a well-structured paragraph (3–5 sentences). Be detailed yet concise."
-    : "Write a short answer of 1–2 sentences maximum. Be direct.";
+  const LENGTH_INSTRUCTIONS = {
+    crisp:  "Return ONLY the exact raw value — a name, email address, phone number, URL, or a single word/phrase. No sentences. No explanation. Just the bare value itself.",
+    short:  "Write a concise answer of 1–2 sentences maximum. Be direct and professional.",
+    medium: "Write a clear, informative answer of 3–4 sentences. Be professional and specific.",
+    long:   "Write a well-structured, detailed paragraph of 5–7 sentences. Be thorough, specific, and professional.",
+  };
+
+  const lengthInstruction = LENGTH_INSTRUCTIONS[fillType] || LENGTH_INSTRUCTIONS.short;
 
   const profileBlock = buildProfileBlock(profile);
+
+  const contextBlock = extraContext
+    ? `\n--- ADDITIONAL USER CONTEXT ---\n${extraContext}\n--- END ADDITIONAL CONTEXT ---\n`
+    : "";
 
   return `You are an AI assistant helping a job applicant fill out a job application form.
 You must answer ONLY based on the applicant's profile data below. 
@@ -109,9 +131,8 @@ Page / Job Title: ${pageTitle}
 Field Label: ${label}
 Field Placeholder: ${placeholder}
 Nearby text on page: ${surroundingText}
-Field Type: ${isLong ? "Long answer (textarea)" : "Short answer (text input)"}
 --- END CONTEXT ---
-
+${contextBlock}
 INSTRUCTIONS:
 ${lengthInstruction}
 Answer in first person (e.g., "I have..." not "The applicant has...").
@@ -151,9 +172,10 @@ function buildProfileBlock(profile = {}) {
  * @param {string} apiKey   – Google AI Studio API key
  * @param {string} model    – e.g. "gemini-2.0-flash" (default)
  * @param {string} prompt   – full prompt string
+ * @param {string} fillType – controls maxOutputTokens budget
  * @returns {Promise<string>}
  */
-async function callGemini(apiKey, model, prompt) {
+async function callGemini(apiKey, model, prompt, fillType = "short") {
   const selectedModel = model || "gemini-2.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
 
@@ -170,7 +192,6 @@ async function callGemini(apiKey, model, prompt) {
       ],
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 400,
       },
       safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT",        threshold: "BLOCK_NONE" },

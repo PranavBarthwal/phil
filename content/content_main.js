@@ -31,7 +31,18 @@
 
   /** Debounced re-scan on DOM mutations (handles SPAs & dynamic forms) */
   function observeDOM() {
-    const observer = new MutationObserver(() => {
+    const observer = new MutationObserver((mutations) => {
+      // Ignore mutations that only touch Phil's own UI nodes
+      const hasExternalChange = mutations.some((m) =>
+        Array.from(m.addedNodes).some(
+          (n) =>
+            n.nodeType === 1 &&
+            !n.classList?.value?.includes("phil-") &&
+            !n.closest?.('[class*="phil-"]')
+        )
+      );
+      if (!hasExternalChange) return;
+
       clearTimeout(scanDebounceTimer);
       scanDebounceTimer = setTimeout(() => {
         scanAndInject();
@@ -46,7 +57,21 @@
 
   // ── Single Field Fill ──────────────────────────────────────────────────────
 
-  async function handleSingleFill(field) {
+  /**
+   * @param {object} field    – field descriptor from PhilDetector
+   * @param {string} fillType – 'crisp' | 'short' | 'medium' | 'long' | 'context'
+   */
+  async function handleSingleFill(field, fillType = "short") {
+    let extraContext = null;
+
+    // For "context" mode, collect user input first (text + optional voice)
+    if (fillType === "context") {
+      const result = await PhilModal.showContextInput(field.label);
+      if (result === null) return; // user cancelled
+      extraContext = result.text || null;
+      fillType = result.fillType || "medium";
+    }
+
     PhilUIInjector.setLoading(field.id, true);
 
     try {
@@ -54,7 +79,7 @@
       if (!hasProfileData(profile)) {
         PhilUIInjector.setLoading(field.id, false);
         PhilModal.showError(
-          "Your profile is empty. Please open the PhilAI extension popup and fill in your details first."
+          "Your profile is empty. Please open the PhilAI sidebar and fill in your details first."
         );
         return;
       }
@@ -63,7 +88,7 @@
 
       const response = await chrome.runtime.sendMessage({
         type: "GENERATE_ANSWER",
-        payload: { fieldContext, profile },
+        payload: { fieldContext, profile, fillType, extraContext },
       });
 
       PhilUIInjector.setLoading(field.id, false);
@@ -89,7 +114,7 @@
     const profile = await getStoredProfile();
     if (!hasProfileData(profile)) {
       PhilModal.showError(
-        "Your profile is empty. Please open the PhilAI extension popup and fill in your details first."
+        "Your profile is empty. Please open the PhilAI sidebar and fill in your details first."
       );
       return;
     }
@@ -204,6 +229,9 @@
         sendResponse({ started: true });
       }
     });
+
+    // Triggered by Fill All button inside the sidebar
+    document.addEventListener("phil-fill-all", () => handleFillAll());
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

@@ -25,15 +25,15 @@
         "content/detector.js",
         "content/ui_injector.js",
         "content/modal.js",
-        "content/content_main.js"
+        "content/content_main.js",
+        "content/sidebar.js"
       ],
-      "css": ["content/content_styles.css"],
+      "css": ["content/content_styles.css", "content/sidebar.css"],
       "run_at": "document_idle"
     }
   ],
 
   "action": {
-    "default_popup": "popup/popup.html",
     "default_icon": {
       "16":  "icons/icon16.png",
       "48":  "icons/icon48.png",

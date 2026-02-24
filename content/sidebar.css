@@ -1,0 +1,568 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   sidebar.css – PhilAI In-Page Sidebar
+   All rules scoped under #phil-sidebar or #phil-sb-toggle to avoid
+   host-page style collisions.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Sidebar root ────────────────────────────────────────────────────────── */
+
+#phil-sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 380px !important;
+  height: 100vh !important;
+  background: #ffffff !important;
+  box-shadow: -6px 0 36px rgba(0, 0, 0, 0.14) !important;
+  z-index: 2147483640 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transform: translateX(100%) !important;
+  transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 13px !important;
+  color: #111927 !important;
+  border-left: 1px solid #e4e7f0 !important;
+  overflow: hidden !important;
+  line-height: 1.5 !important;
+}
+
+#phil-sidebar.phil-sb-open {
+  transform: translateX(0) !important;
+}
+
+/* Global reset inside sidebar */
+#phil-sidebar *,
+#phil-sidebar *::before,
+#phil-sidebar *::after {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+/* ── Floating toggle tab ─────────────────────────────────────────────────── */
+
+#phil-sb-toggle {
+  position: fixed !important;
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 28px !important;
+  height: 68px !important;
+  background: #4361ee !important;
+  border: none !important;
+  border-radius: 8px 0 0 8px !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  z-index: 2147483639 !important;
+  box-shadow: -3px 0 14px rgba(67, 97, 238, 0.35) !important;
+  transition: width 0.18s, background 0.18s, opacity 0.2s !important;
+  padding: 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  outline: none !important;
+}
+
+#phil-sb-toggle:hover {
+  background: #3451d1 !important;
+  width: 32px !important;
+}
+
+#phil-sb-toggle.phil-sb-toggle-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#phil-sb-toggle svg {
+  flex-shrink: 0 !important;
+  display: block !important;
+}
+
+#phil-sb-toggle span {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed !important;
+  transform: rotate(180deg) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  display: block !important;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 13px 14px 11px !important;
+  background: #0d1117 !important;
+  color: #fff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  flex-shrink: 0 !important;
+}
+
+#phil-sidebar .phil-sb-logo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  background: #4361ee !important;
+  border-radius: 6px !important;
+  color: #fff !important;
+  flex-shrink: 0 !important;
+}
+
+#phil-sidebar .phil-sb-logo svg {
+  display: block !important;
+}
+
+#phil-sidebar .phil-sb-title-block {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+#phil-sidebar .phil-sb-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  line-height: 1.2 !important;
+  color: #ffffff !important;
+  display: block !important;
+}
+
+#phil-sidebar .phil-sb-subtitle {
+  font-size: 10px !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  letter-spacing: 0.6px !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  margin-top: 1px !important;
+}
+
+#phil-sidebar .phil-sb-status-dot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #10b981 !important;
+  flex-shrink: 0 !important;
+}
+
+#phil-sidebar .phil-sb-status-dot.inactive {
+  background: #ef4444 !important;
+}
+
+#phil-sidebar .phil-sb-close {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: background 0.15s, color 0.15s !important;
+  outline: none !important;
+}
+
+#phil-sidebar .phil-sb-close:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+}
+
+#phil-sidebar .phil-sb-close svg {
+  display: block !important;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-tabs {
+  display: flex !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e4e7f0 !important;
+  flex-shrink: 0 !important;
+}
+
+#phil-sidebar .phil-sb-tab {
+  flex: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  padding: 9px 4px 8px !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #9299b8 !important;
+  cursor: pointer !important;
+  transition: color 0.15s, border-color 0.15s !important;
+  white-space: nowrap !important;
+  outline: none !important;
+}
+
+#phil-sidebar .phil-sb-tab svg {
+  flex-shrink: 0 !important;
+  opacity: 0.7 !important;
+  display: block !important;
+}
+
+#phil-sidebar .phil-sb-tab:hover {
+  color: #4361ee !important;
+}
+
+#phil-sidebar .phil-sb-tab:hover svg {
+  opacity: 1 !important;
+}
+
+#phil-sidebar .phil-sb-tab.phil-sb-tab-active {
+  color: #4361ee !important;
+  border-bottom-color: #4361ee !important;
+  font-weight: 700 !important;
+}
+
+#phil-sidebar .phil-sb-tab.phil-sb-tab-active svg {
+  opacity: 1 !important;
+}
+
+/* ── Tab Body ────────────────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-body {
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+#phil-sidebar .phil-sb-content {
+  display: none !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 16px !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+#phil-sidebar .phil-sb-content.phil-sb-content-active {
+  display: flex !important;
+}
+
+/* Scrollbar styling */
+#phil-sidebar .phil-sb-content::-webkit-scrollbar {
+  width: 4px !important;
+}
+#phil-sidebar .phil-sb-content::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+#phil-sidebar .phil-sb-content::-webkit-scrollbar-thumb {
+  background: #e4e7f0 !important;
+  border-radius: 3px !important;
+}
+#phil-sidebar .phil-sb-content::-webkit-scrollbar-thumb:hover {
+  background: #c4c9d8 !important;
+}
+
+/* ── Form Groups ─────────────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+}
+
+#phil-sidebar .phil-sb-form-row {
+  display: flex !important;
+  gap: 10px !important;
+}
+
+#phil-sidebar .phil-sb-form-row .phil-sb-form-group {
+  flex: 1 !important;
+}
+
+#phil-sidebar label {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #4b5675 !important;
+  letter-spacing: 0.15px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+#phil-sidebar .phil-sb-label-hint {
+  font-weight: 400 !important;
+  color: #9299b8 !important;
+  font-size: 10px !important;
+}
+
+#phil-sidebar .phil-sb-label-link {
+  margin-left: auto !important;
+  font-size: 10px !important;
+  color: #4361ee !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+}
+
+#phil-sidebar .phil-sb-label-link:hover {
+  text-decoration: underline !important;
+}
+
+#phil-sidebar input[type="text"],
+#phil-sidebar input[type="email"],
+#phil-sidebar input[type="url"],
+#phil-sidebar input[type="tel"],
+#phil-sidebar input[type="password"],
+#phil-sidebar select,
+#phil-sidebar textarea {
+  width: 100% !important;
+  padding: 8px 10px !important;
+  border: 1px solid #e4e7f0 !important;
+  border-radius: 5px !important;
+  font-size: 12px !important;
+  color: #111927 !important;
+  background: #ffffff !important;
+  transition: border-color 0.18s, box-shadow 0.18s !important;
+  line-height: 1.5 !important;
+  resize: vertical !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  display: block !important;
+}
+
+#phil-sidebar input[type="text"]:focus,
+#phil-sidebar input[type="email"]:focus,
+#phil-sidebar input[type="url"]:focus,
+#phil-sidebar input[type="tel"]:focus,
+#phil-sidebar input[type="password"]:focus,
+#phil-sidebar select:focus,
+#phil-sidebar textarea:focus {
+  border-color: #4361ee !important;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1) !important;
+}
+
+#phil-sidebar textarea {
+  min-height: 58px !important;
+}
+
+#phil-sidebar select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239299b8'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  padding-right: 28px !important;
+  cursor: pointer !important;
+}
+
+#phil-sidebar .phil-sb-field-note {
+  font-size: 10px !important;
+  color: #9299b8 !important;
+  margin-top: 1px !important;
+  line-height: 1.4 !important;
+}
+
+#phil-sidebar .phil-sb-input-wrap {
+  position: relative !important;
+}
+
+#phil-sidebar .phil-sb-input-wrap input {
+  padding-right: 36px !important;
+}
+
+#phil-sidebar .phil-sb-toggle-vis {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+  opacity: 0.45 !important;
+  transition: opacity 0.15s !important;
+  display: flex !important;
+  align-items: center !important;
+  color: #4b5675 !important;
+  outline: none !important;
+}
+
+#phil-sidebar .phil-sb-toggle-vis:hover {
+  opacity: 1 !important;
+}
+
+#phil-sidebar .phil-sb-toggle-vis svg {
+  display: block !important;
+}
+
+/* ── Section intro / tips ────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-intro {
+  font-size: 12px !important;
+  color: #4b5675 !important;
+  line-height: 1.55 !important;
+  background: #eef0fd !important;
+  padding: 10px 12px !important;
+  border-radius: 5px !important;
+  border-left: 2px solid #4361ee !important;
+}
+
+#phil-sidebar .phil-sb-tip {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+  color: #9299b8 !important;
+  line-height: 1.45 !important;
+}
+
+#phil-sidebar .phil-sb-tip svg {
+  display: block !important;
+  flex-shrink: 0 !important;
+  margin-top: 1px !important;
+}
+
+/* ── Settings sections ───────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding-top: 14px !important;
+  border-top: 1px solid #e4e7f0 !important;
+}
+
+#phil-sidebar .phil-sb-section-title {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #9299b8 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+
+#phil-sidebar .phil-sb-btn-row {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+#phil-sidebar .phil-sb-about-text {
+  font-size: 12px !important;
+  color: #9299b8 !important;
+  line-height: 1.6 !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 7px 14px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  border: none !important;
+  transition: background 0.15s, box-shadow 0.15s, opacity 0.15s !important;
+  outline: none !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+}
+
+#phil-sidebar .phil-sb-btn svg {
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+
+#phil-sidebar .phil-sb-btn-primary {
+  background: #4361ee !important;
+  color: #ffffff !important;
+}
+
+#phil-sidebar .phil-sb-btn-primary:hover {
+  background: #3451d1 !important;
+  box-shadow: 0 2px 10px rgba(67, 97, 238, 0.35) !important;
+}
+
+#phil-sidebar .phil-sb-btn-primary:active {
+  background: #2d44b8 !important;
+}
+
+#phil-sidebar .phil-sb-btn-secondary {
+  background: #f7f8fc !important;
+  color: #4b5675 !important;
+  border: 1px solid #e4e7f0 !important;
+}
+
+#phil-sidebar .phil-sb-btn-secondary:hover {
+  background: #eef0fd !important;
+  color: #4361ee !important;
+  border-color: #c2caf8 !important;
+}
+
+#phil-sidebar .phil-sb-btn-outline {
+  background: #ffffff !important;
+  color: #4b5675 !important;
+  border: 1px solid #e4e7f0 !important;
+  flex: 1 !important;
+}
+
+#phil-sidebar .phil-sb-btn-outline:hover {
+  background: #f7f8fc !important;
+  border-color: #c4c9d8 !important;
+}
+
+#phil-sidebar .phil-sb-btn-danger {
+  background: #fef2f2 !important;
+  color: #ef4444 !important;
+  border: 1px solid #fecaca !important;
+  width: 100% !important;
+}
+
+#phil-sidebar .phil-sb-btn-danger:hover {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+
+#phil-sidebar .phil-sb-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 11px 14px !important;
+  border-top: 1px solid #e4e7f0 !important;
+  background: #ffffff !important;
+  flex-shrink: 0 !important;
+  gap: 8px !important;
+}
+
+#phil-sidebar .phil-sb-save-msg {
+  font-size: 11px !important;
+  color: #10b981 !important;
+  font-weight: 600 !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+#phil-sidebar .phil-sb-save-msg.error {
+  color: #ef4444 !important;
+}
+
+#phil-sidebar .phil-sb-footer-btns {
+  display: flex !important;
+  gap: 7px !important;
+  flex-shrink: 0 !important;
+}
