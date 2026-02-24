@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhilAI – Job Form Filler</title>
+  <link rel="stylesheet" href="popup_styles.css" />
+</head>
+<body>
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="popup-header">
+    <div class="popup-logo">✨</div>
+    <div class="popup-title-block">
+      <h1 class="popup-title">PhilAI</h1>
+      <span class="popup-subtitle">AI Job Form Filler</span>
+    </div>
+    <div class="popup-status" id="statusDot" title="Extension active"></div>
+  </header>
+
+  <!-- ── Tabs ────────────────────────────────────────────────────────────── -->
+  <nav class="popup-tabs">
+    <button class="tab-btn tab-active" data-tab="profile">👤 Profile</button>
+    <button class="tab-btn" data-tab="links">🔗 Links</button>
+    <button class="tab-btn" data-tab="resume">📄 Resume</button>
+    <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+  </nav>
+
+  <!-- ── Tab: Profile ────────────────────────────────────────────────────── -->
+  <section class="tab-content active" id="tab-profile">
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Jane Doe" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="jane@example.com" />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" placeholder="+1 555 000 0000" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="location">Location</label>
+      <input type="text" id="location" placeholder="San Francisco, CA" />
+    </div>
+
+    <div class="form-group">
+      <label for="shortBio">Short Bio <span class="label-hint">(1–2 sentences)</span></label>
+      <textarea id="shortBio" rows="2" placeholder="A seasoned full-stack engineer with 5 years of experience building scalable SaaS products…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="longBio">Long Bio / Cover Statement <span class="label-hint">(3–5 sentences)</span></label>
+      <textarea id="longBio" rows="4" placeholder="I am a product-focused engineer who loves turning complex problems into clean, user-centric solutions…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="skills">Skills <span class="label-hint">(comma-separated)</span></label>
+      <textarea id="skills" rows="2" placeholder="React, Node.js, TypeScript, AWS, PostgreSQL, Docker…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="experience">Experience Summary</label>
+      <textarea id="experience" rows="4" placeholder="2019–2022: Software Engineer at Acme Corp – built the billing microservice, reduced API latency by 40%…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="education">Education</label>
+      <textarea id="education" rows="2" placeholder="B.Sc. Computer Science, MIT, 2019"></textarea>
+    </div>
+
+  </section>
+
+  <!-- ── Tab: Links ──────────────────────────────────────────────────────── -->
+  <section class="tab-content" id="tab-links">
+
+    <div class="form-group">
+      <label for="linkedin">LinkedIn URL</label>
+      <input type="url" id="linkedin" placeholder="https://linkedin.com/in/janedoe" />
+    </div>
+
+    <div class="form-group">
+      <label for="github">GitHub URL</label>
+      <input type="url" id="github" placeholder="https://github.com/janedoe" />
+    </div>
+
+    <div class="form-group">
+      <label for="portfolio">Portfolio / Website</label>
+      <input type="url" id="portfolio" placeholder="https://janedoe.dev" />
+    </div>
+
+    <div class="form-group">
+      <label for="otherLinks">Other Links <span class="label-hint">(one per line)</span></label>
+      <textarea id="otherLinks" rows="3" placeholder="https://medium.com/@janedoe&#10;https://dribbble.com/janedoe"></textarea>
+    </div>
+
+  </section>
+
+  <!-- ── Tab: Resume ─────────────────────────────────────────────────────── -->
+  <section class="tab-content" id="tab-resume">
+
+    <p class="section-intro">Paste your full resume text below. The AI uses this as the primary source of truth when answering questions.</p>
+
+    <div class="form-group">
+      <label for="resumeText">Full Resume Text</label>
+      <textarea id="resumeText" rows="14" placeholder="Paste plain-text resume here…&#10;&#10;EXPERIENCE&#10;Senior Engineer, Acme Corp (2021–Present)&#10;- Led migration to microservices architecture…"></textarea>
+    </div>
+
+    <p class="resume-tip">💡 Tip: Copy from your resume document and paste as plain text for best results.</p>
+
+  </section>
+
+  <!-- ── Tab: Settings ───────────────────────────────────────────────────── -->
+  <section class="tab-content" id="tab-settings">
+
+    <div class="form-group">
+      <label for="apiKey">
+        Gemini API Key
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="label-link" title="Get your Gemini API key">Get key ↗</a>
+      </label>
+      <div class="input-with-toggle">
+        <input type="password" id="apiKey" placeholder="AIza…" autocomplete="off" />
+        <button class="toggle-visibility" id="toggleApiKey" type="button" title="Show/hide key">👁</button>
+      </div>
+      <p class="field-note">Stored only in your browser. Calls are made directly to Google's Gemini API — never proxied.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="aiModel">Gemini Model</label>
+      <select id="aiModel">
+        <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Free tier – recommended)</option>
+        <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite (Free tier – lightest)</option>
+        <option value="gemini-2.5-pro">Gemini 2.5 Pro (Paid – best quality)</option>
+      </select>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title">Data Management</h3>
+      <div class="btn-row">
+        <button class="btn btn-outline" id="exportDataBtn">⬇ Export Profile</button>
+        <button class="btn btn-outline" id="importDataBtn">⬆ Import Profile</button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none" />
+      </div>
+      <button class="btn btn-danger" id="clearDataBtn">🗑 Clear All Data</button>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title">About</h3>
+      <p class="about-text">PhilAI v1.0.0 – AI-powered job application assistant.<br/>All data stays local. Open source.</p>
+    </div>
+
+  </section>
+
+  <!-- ── Footer / Actions ────────────────────────────────────────────────── -->
+  <footer class="popup-footer">
+    <div class="footer-left">
+      <span class="save-status" id="saveStatus"></span>
+    </div>
+    <div class="footer-right">
+      <button class="btn btn-secondary" id="saveBtn">💾 Save Profile</button>
+      <button class="btn btn-primary" id="fillAllBtn">⚡ Fill All Fields</button>
+    </div>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

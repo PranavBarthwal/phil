@@ -1,0 +1,420 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   popup_styles.css  –  PhilAI Extension Popup Styles
+   ───────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --purple: #667eea;
+  --purple-dark: #764ba2;
+  --purple-light: #ede9fd;
+  --text-primary: #1a1a2e;
+  --text-secondary: #555;
+  --text-muted: #999;
+  --border: #e0e0ef;
+  --bg: #f8f8ff;
+  --white: #ffffff;
+  --red: #e74c3c;
+  --green: #27ae60;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+
+html, body {
+  width: 420px;
+  min-height: 540px;
+  max-height: 620px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--white);
+  overflow: hidden;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 10px;
+  background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
+  color: #fff;
+}
+
+.popup-logo {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.popup-title-block {
+  flex: 1;
+}
+
+.popup-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.popup-subtitle {
+  font-size: 10px;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.popup-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.8);
+  flex-shrink: 0;
+}
+
+.popup-status.inactive {
+  background: #e74c3c;
+  box-shadow: 0 0 6px rgba(231, 76, 60, 0.8);
+}
+
+/* ── Tabs ──────────────────────────────────────────────────────────────────── */
+
+.popup-tabs {
+  display: flex;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 4px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.tab-btn:hover {
+  color: var(--purple);
+}
+
+.tab-btn.tab-active {
+  color: var(--purple);
+  border-bottom-color: var(--purple);
+  font-weight: 700;
+  background: var(--white);
+}
+
+/* ── Tab Content ───────────────────────────────────────────────────────────── */
+
+.tab-content {
+  display: none;
+  padding: 14px 16px;
+  overflow-y: auto;
+  max-height: 432px;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.tab-content.active {
+  display: flex;
+}
+
+/* ── Form Groups ───────────────────────────────────────────────────────────── */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.label-hint {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.label-link {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--purple);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.label-link:hover {
+  text-decoration: underline;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="password"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--white);
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+textarea {
+  min-height: 56px;
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.field-note {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.input-with-toggle {
+  position: relative;
+}
+
+.input-with-toggle input {
+  padding-right: 36px;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.toggle-visibility:hover {
+  opacity: 1;
+}
+
+/* ── Intro / Tips ──────────────────────────────────────────────────────────── */
+
+.section-intro {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  background: var(--purple-light);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--purple);
+}
+
+.resume-tip {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ── Settings Sections ─────────────────────────────────────────────────────── */
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.settings-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.about-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.35);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.5);
+}
+
+.btn-secondary {
+  background: var(--bg);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  background: #ebebf7;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--purple);
+  border-color: var(--purple);
+  padding: 5px 12px;
+  font-size: 11px;
+}
+
+.btn-outline:hover {
+  background: var(--purple-light);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--red);
+  border-color: #f8d7da;
+  font-size: 11px;
+  padding: 5px 12px;
+}
+
+.btn-danger:hover {
+  background: #fdf0f0;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+
+.popup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.footer-right {
+  display: flex;
+  gap: 8px;
+}
+
+.save-status {
+  font-size: 11px;
+  color: var(--green);
+  font-weight: 500;
+  min-width: 80px;
+  transition: opacity 0.3s;
+}
+
+.save-status.error {
+  color: var(--red);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+
+.tab-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+  background: #c0c0d8;
+}
